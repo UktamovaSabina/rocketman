@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsBoolean, IsString, Length } from "class-validator";
+import { IsBoolean, IsNumber, IsString, Length } from "class-validator";
 
 export class CreateStoreDto {
   @ApiProperty({ type: String, example: "adidas" })
@@ -28,5 +28,6 @@ export class CreateStoreDto {
   status: boolean
 
   @ApiProperty({type: Number, example: 1})
-  categoryId: number
+  @IsNumber()
+  category: number
 }

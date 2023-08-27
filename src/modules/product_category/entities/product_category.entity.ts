@@ -1,20 +1,19 @@
 import { Product } from "src/modules/product/entities/product.entity";
 import { Store } from "src/modules/store/entities/store.entity";
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
-export class ProductCategory {
+export class ProductCategory extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({type: 'varchar'})
   product_category_name: string;
 
-  @Column()
+  @Column({type: 'boolean'})
   status: boolean
 
   @ManyToOne(()=>Store, store=>store.productCategories)
-  @JoinColumn({name: 'store_id'})
   store: Store;
 
   @OneToMany(()=>Product, product=>product.productCategory)

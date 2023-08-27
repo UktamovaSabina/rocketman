@@ -32,8 +32,8 @@ import { PaymentModule } from './modules/payment/payment.module';
     DriverModule,
     CategoryModule,
     StoreModule,
-    // ProductCategoryModule,
-    // ProductModule,
+    ProductCategoryModule,
+    ProductModule,
     // OrderModule,
     // PaymentModule
   ],

@@ -26,7 +26,7 @@ export class Store extends BaseEntity{
   status: boolean
 
   @ManyToOne(() => Category, category => category.stores)
-  categoryId: Category;
+  category: Category;
 
   @OneToMany(() => ProductCategory, product_category => product_category.store)
   productCategories: ProductCategory[]

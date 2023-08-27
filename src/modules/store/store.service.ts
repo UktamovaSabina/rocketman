@@ -12,7 +12,7 @@ export class StoreService {
 
   async findAll() {
     try {
-      let stores = await this.storeRepo.find({ relations: { categoryId: true, productCategories: true } })
+      let stores = await this.storeRepo.find({ relations: { category: true, productCategories: true } })
       return {
         status: 200,
         message: 'all stores',
@@ -28,7 +28,7 @@ export class StoreService {
 
   async findOne(id: number) {
     try {
-      let store = await this.storeRepo.findOne({ where: { id }, relations: { categoryId: true, productCategories: true } })
+      let store = await this.storeRepo.findOne({ where: { id }, relations: { category: true, productCategories: true } })
       if (!store) {
         throw new Error('store is not found')
       }
@@ -51,14 +51,14 @@ export class StoreService {
       if (duplicate) {
         throw new Error("Store name already exists!")
       }
-      const category = await this.categoryRepo.findOne({ where: { id: body.categoryId } });
+      const category = await this.categoryRepo.findOne({ where: { id: body.category } });
       if (!category) {
         throw new Error("category is not found!")
       }
       if (!body.phone_number.startsWith("+998")) {
         throw new Error("Phone number must start with +998")
       }
-      const store = this.storeRepo.create({ ...body, categoryId: { id: body.categoryId } });
+      const store = this.storeRepo.create({ ...body, category: { id: body.category } });
       await this.storeRepo.save(store);
       return {
         status: 201,
@@ -75,7 +75,7 @@ export class StoreService {
 
   async update(id: number, body: UpdateStoreDto) {
     try {
-      let foundStore = await this.storeRepo.findOne({ where: { id }, relations: { categoryId: true } });
+      let foundStore = await this.storeRepo.findOne({ where: { id }, relations: { category: true } });
       console.log(foundStore);
 
       if (!foundStore) {
@@ -84,7 +84,7 @@ export class StoreService {
       if (body.phone_number && !body.phone_number?.startsWith("+998")) {
         throw new Error("Phone number must start with +998")
       }
-      let store = await this.storeRepo.update({ id }, { ...body, categoryId: { id: body.categoryId || foundStore.categoryId.id } });
+      let store = await this.storeRepo.update({ id }, { ...body, category: { id: body.categoryId || foundStore.category.id } });
       if (store.affected > 0) {
         return {
           status: 205,
