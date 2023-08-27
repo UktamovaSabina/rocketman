@@ -4,7 +4,10 @@ import { ProductService } from './product.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { multerOptions } from 'src/utils/multer';
 import { JwtAuthGuard } from '../auth/guards/jwt.guards';
+import { CreateProductDto } from './dto/create-product.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags("product")
 @Controller('product')
 export class ProductController {
   constructor(private readonly productService: ProductService) { }
@@ -19,21 +22,14 @@ export class ProductController {
     return await this.productService.findOne(id);
   }
   
+  @ApiBearerAuth("defaultBearerAuth")
   @UseGuards(JwtAuthGuard)
   @Post()
-  @UseInterceptors(FileInterceptor('file', multerOptions))
-  async create(@Body() body: any, @UploadedFile() file: Express.Multer.File) {
-    try {
-      let reqToPass = { ...body, productCategory: +body.ProductCategory, product_image: file.filename, status: body.status == 'true' ? true : false }
-      return await this.productService.create(reqToPass);
-    } catch (error) {
-      return {
-        status: 400,
-        message: error.message
-      }
-    }
+  async create(@Body() body: CreateProductDto) {
+      return await this.productService.create(body)
   }
 
+  @ApiBearerAuth("defaultBearerAuth")
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
   @UseInterceptors(FileInterceptor('file', multerOptions))
@@ -49,6 +45,7 @@ export class ProductController {
    }
   }
 
+  @ApiBearerAuth("defaultBearerAuth")
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number) {

@@ -47,10 +47,9 @@ export class ProductService {
   }
 
   async create(body: CreateProductDto) {
-    console.log(body)
     try {
       let foundProduct = await this.productRepo.findOneBy({product_name: body.product_name})
-      if(!foundProduct){
+      if(foundProduct){
         throw new Error('Product already exists')
       }
       let foundProductCategory = await this.productCategoryRepo.findOne({where: {id: body.productCategory}})

@@ -14,9 +14,6 @@ export class Product extends BaseEntity {
   product_description: string
 
   @Column({type: 'varchar'})
-  product_image: string
-
-  @Column({type: 'varchar'})
   product_image_link: string
 
   @Column({type: 'numeric'})
@@ -30,5 +27,4 @@ export class Product extends BaseEntity {
 
   @ManyToMany(() => Order, order => order.products)
   orders: Order[];
-
 }
