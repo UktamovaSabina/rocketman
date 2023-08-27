@@ -10,4 +10,4 @@ import { Users } from '../user/entities/user.entity';
   controllers: [ComplainController],
   providers: [ComplainService],
 })
-export class ComplainModule {}
+export class ComplainModule { }

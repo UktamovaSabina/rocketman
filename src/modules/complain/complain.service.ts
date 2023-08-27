@@ -17,7 +17,7 @@ export class ComplainService {
 
   async findOne(id: number) {
     return await this.complainsRepo.findOne({
-      where: { id }, relations: {user: true},
+      where: { id }, relations: { user: true },
     });
   }
 

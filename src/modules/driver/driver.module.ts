@@ -9,4 +9,4 @@ import { Driver } from './entities/driver.entity';
   controllers: [DriverController],
   providers: [DriverService],
 })
-export class DriverModule {}
+export class DriverModule { }

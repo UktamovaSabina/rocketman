@@ -17,11 +17,11 @@ export class OrderService {
       where: { id }, relations: { user: true, driver: true, products: true },
     });
     console.log(result);
-    
+
     return result
     // let result = await this.orderRepo.findOneBy({id});
     // console.log(result);
-    
+
     // return result
   }
 

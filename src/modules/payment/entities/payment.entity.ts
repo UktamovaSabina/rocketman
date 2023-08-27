@@ -5,13 +5,13 @@ export class Payment {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ type: "varchar" })
   payment_name: string;
 
-  @Column()
+  @Column({ type: "varchar" })
   payment_button_name: string;
 
-  @Column()
+  @Column({ type: "boolean", default: false })
   status: Boolean;
 
   @CreateDateColumn()

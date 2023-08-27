@@ -3,7 +3,7 @@ import { ProductCategory } from "src/modules/product_category/entities/product_c
 import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
-export class Store extends BaseEntity{
+export class Store extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

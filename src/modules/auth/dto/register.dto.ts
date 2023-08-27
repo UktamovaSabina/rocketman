@@ -7,16 +7,16 @@ enum AdminRole {
 }
 
 export class RegisterDto {
-    @ApiProperty({type: String, example: "John"})
+    @ApiProperty({ type: String, example: "John" })
     @IsString()
     username: string;
 
-    @ApiProperty({type: String, example: "12345678"})
+    @ApiProperty({ type: String, example: "12345678" })
     @IsString()
     @Length(8)
     password: string;
 
-    @ApiProperty({type: AdminRole, enum: AdminRole})
+    @ApiProperty({ type: AdminRole, enum: AdminRole })
     @IsEnum(AdminRole)
     role?: AdminRole;
 }

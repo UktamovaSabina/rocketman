@@ -10,4 +10,4 @@ import { JwtStrategy } from '../auth/strategy/jwt.strategy';
   controllers: [CategoryController],
   providers: [CategoryService, JwtStrategy],
 })
-export class CategoryModule {}
+export class CategoryModule { }

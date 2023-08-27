@@ -1,17 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
-import { UpdatePaymentStatusDto } from './dto/update-payment-status.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags("payment")
 @Controller('payment')
 export class PaymentController {
-  constructor(private readonly paymentService: PaymentService) {}
-
-  @Post()
-  create(@Body() createPaymentDto: CreatePaymentDto) {
-    return this.paymentService.create(createPaymentDto);
-  }
+  constructor(private readonly paymentService: PaymentService) { }
 
   @Get()
   findAll() {
@@ -19,20 +15,23 @@ export class PaymentController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.paymentService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.paymentService.findOne(id);
   }
 
-  @Patch('payment-update/:id')
-  updatePayment(@Param('id') id: string, @Body() updatePaymentDto: UpdatePaymentDto) {
-    return this.paymentService.updatePayment(+id, updatePaymentDto);
+  @ApiBearerAuth("defaultBearerAuth")
+  @Post()
+  async create(@Body() body: CreatePaymentDto) {
+    return await this.paymentService.create(body);
   }
 
-  @Patch('status-update/:id')
-  updatePaymentStatus(@Param('id') id: string, @Body() updatePaymentStatusDto: UpdatePaymentStatusDto) {
-    return this.paymentService.updatePaymentStatus(+id, updatePaymentStatusDto);
+  @ApiBearerAuth("defaultBearerAuth")
+  @Patch(':id')
+  updatePayment(@Param('id', ParseIntPipe) id: number, @Body() body: UpdatePaymentDto) {
+    return this.paymentService.updatePayment(id, body);
   }
 
+  @ApiBearerAuth("defaultBearerAuth")
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.paymentService.remove(+id);

@@ -15,33 +15,33 @@ export class CreateOrderDto {
   @IsEnum(Order_status)
   status: Order_status;
 
-  @ApiProperty({type: String, example: "cash"})
+  @ApiProperty({ type: String, example: "cash" })
   @IsNotEmpty()
   @IsString()
   payment_type: string;
 
-  @ApiProperty({type: String, example: "0000000"})
+  @ApiProperty({ type: String, example: "0000000" })
   @IsNotEmpty()
   @IsString()
   longitude: string;
 
-  @ApiProperty({type: String, example: "0000000"})
+  @ApiProperty({ type: String, example: "0000000" })
   @IsNotEmpty()
   @IsString()
   latitude: string;
 
-  @ApiProperty({type: Array, example: [1, 2, 3], description: "array of products ID"})
+  @ApiProperty({ type: Array, example: [1, 2, 3], description: "array of products ID" })
   @IsArray()
   @ArrayNotEmpty()
   @IsNumber()
   products: number[];
 
-  @ApiProperty({type: Number, example: 1, description: "existing user ID"})
+  @ApiProperty({ type: Number, example: 1, description: "existing user ID" })
   @IsNotEmpty()
   @IsNumber()
   user: number;
 
-  @ApiProperty({type: Number, example: 1, description: "existing driver ID"})
+  @ApiProperty({ type: Number, example: 1, description: "existing driver ID" })
   @IsNotEmpty()
   @IsNumber()
   driver: number;

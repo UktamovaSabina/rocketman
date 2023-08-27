@@ -6,8 +6,8 @@ import { Users } from './entities/user.entity';
 import { JwtStrategy } from '../auth/strategy/jwt.strategy';
 
 @Module({
-  imports:[ TypeOrmModule.forFeature([Users])],
+  imports: [TypeOrmModule.forFeature([Users])],
   controllers: [UserController],
   providers: [UserService, JwtStrategy],
 })
-export class UserModule {}
+export class UserModule { }

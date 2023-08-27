@@ -1,8 +1,5 @@
-import { ProductCategory } from 'src/modules/product_category/entities/product_category.entity';
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, Request, UploadedFile, UseGuards, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { ProductService } from './product.service';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { multerOptions } from 'src/utils/multer';
 import { JwtAuthGuard } from '../auth/guards/jwt.guards';
 import { CreateProductDto } from './dto/create-product.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -17,17 +14,17 @@ export class ProductController {
   async findAll() {
     return await this.productService.findAll();
   }
-  
+
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
     return await this.productService.findOne(id);
   }
-  
+
   @ApiBearerAuth("defaultBearerAuth")
   @UseGuards(JwtAuthGuard)
   @Post()
   async create(@Body() body: CreateProductDto) {
-      return await this.productService.create(body)
+    return await this.productService.create(body)
   }
 
   @ApiBearerAuth("defaultBearerAuth")

@@ -7,24 +7,24 @@ export class Product extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({type: 'varchar'})
+  @Column({ type: 'varchar' })
   product_name: string;
 
-  @Column({type: 'varchar'})
+  @Column({ type: 'varchar' })
   product_description: string
 
-  @Column({type: 'varchar'})
+  @Column({ type: 'varchar' })
   product_image_link: string
 
-  @Column({type: 'numeric'})
+  @Column({ type: 'int' })
   product_price: number;
 
-  @Column({type: 'boolean'})
+  @Column({ type: 'boolean' })
   status: boolean;
 
-  @ManyToOne(() => ProductCategory, productCategory => productCategory.products)
+  @ManyToOne(() => ProductCategory, (productCategory: ProductCategory) => productCategory.products)
   productCategory: ProductCategory;
 
-  @ManyToMany(() => Order, order => order.products)
+  @ManyToMany(() => Order, (order: Order) => order.products)
   orders: Order[];
 }

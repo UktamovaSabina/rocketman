@@ -6,7 +6,7 @@ export class UpdateCategoryDto extends PartialType(CreateCategoryDto) {
   @IsNotEmpty()
   @IsString()
   category_name: string;
-  
+
   @IsNotEmpty()
   @IsBoolean()
   status: boolean

@@ -8,18 +8,18 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 @ApiTags("product-category")
 @Controller('product-category')
 export class ProductCategoryController {
-  constructor(private readonly productCategoryService: ProductCategoryService) {}
+  constructor(private readonly productCategoryService: ProductCategoryService) { }
 
   @Get()
   async findAll() {
     return await this.productCategoryService.findAll();
   }
-  
+
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
     return await this.productCategoryService.findOne(id);
   }
-  
+
   @ApiBearerAuth("defaultBearerAuth")
   @UseGuards(JwtAuthGuard)
   @Post()

@@ -12,4 +12,4 @@ import { Driver } from '../driver/entities/driver.entity';
   controllers: [OrderController],
   providers: [OrderService],
 })
-export class OrderModule {}
+export class OrderModule { }

@@ -7,16 +7,16 @@ export class ProductCategory extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({type: 'varchar'})
+  @Column({ type: 'varchar' })
   product_category_name: string;
 
-  @Column({type: 'boolean'})
+  @Column({ type: 'boolean' })
   status: boolean
 
-  @ManyToOne(()=>Store, store=>store.productCategories)
+  @ManyToOne(() => Store, (store: Store) => store.productCategories)
   store: Store;
 
-  @OneToMany(()=>Product, product=>product.productCategory)
+  @OneToMany(() => Product, product => product.productCategory)
   products: Product;
 
 }

@@ -11,4 +11,4 @@ import { JwtStrategy } from '../auth/strategy/jwt.strategy';
   controllers: [ProductCategoryController],
   providers: [ProductCategoryService, JwtStrategy],
 })
-export class ProductCategoryModule {}
+export class ProductCategoryModule { }

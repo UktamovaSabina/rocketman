@@ -4,7 +4,7 @@ import { BaseEntity, Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
 
 @Entity()
 export class Users extends BaseEntity {
-  @PrimaryColumn({type: "bigint"})
+  @PrimaryColumn({ type: "bigint" })
   id: number;
 
   @Column({ type: "varchar" })
@@ -16,10 +16,10 @@ export class Users extends BaseEntity {
   @Column({ type: "varchar" })
   phone_number: string
 
-  @OneToMany(() => Complains, (complain)=> complain.user)
+  @OneToMany(() => Complains, (complain) => complain.user)
   complains: Complains[]
 
-  @OneToMany(() => Order, order=>order.user)
+  @OneToMany(() => Order, order => order.user)
   orders: Order[]
 }
 

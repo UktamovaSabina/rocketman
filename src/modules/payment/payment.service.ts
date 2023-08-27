@@ -1,81 +1,110 @@
-import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Payment } from './entities/payment.entity';
 import { Repository } from 'typeorm';
-import { UpdatePaymentStatusDto } from './dto/update-payment-status.dto';
 
 @Injectable()
 export class PaymentService {
-  constructor(@InjectRepository(Payment) private readonly paymentRepo: Repository<Payment>){}
-  async create(createPaymentDto: CreatePaymentDto) {
-    let payment = this.paymentRepo.create({...createPaymentDto, status: true})
-    await this.paymentRepo.save(payment)
-    return {
-      status: HttpStatus.CREATED,
-      message: 'success',
-      data: [payment]
-    }
-  }
+  constructor(@InjectRepository(Payment) private readonly paymentRepo: Repository<Payment>) { }
 
   async findAll() {
-    let payments = await this.paymentRepo.find()
-
-    return {
-      status: HttpStatus.OK,
-      message: 'all payments',
-      data: payments
-    };
+    try {
+      let payments = await this.paymentRepo.find()
+      return {
+        status: 200,
+        message: 'all payments',
+        data: payments
+      };
+    } catch (error) {
+      return {
+        status: 400,
+        message: error.message
+      }
+    }
   }
 
   async findOne(id: number) {
-    let payment = await this.paymentRepo.findOne({where: {id}})
-    if(!payment){
-      return new NotFoundException('payment not found')
-    }
-    return {
-      status: HttpStatus.OK,
-      message: 'single payment',
-      data: [payment]
-    };
-  }
-
-  async updatePayment(id: number, updatePaymentDto: UpdatePaymentDto) {
-    let payment = await this.paymentRepo.findOne({where: {id}})
-    if(!payment){
-      return new NotFoundException('payment not found')
-    }
-    await this.paymentRepo.update(id, updatePaymentDto)
-
-    return {
-      status: HttpStatus.ACCEPTED,
-      message: 'Payment updated'
+    try {
+      let payment = await this.paymentRepo.findOne({ where: { id } })
+      if (!payment) {
+        throw new Error('payment not found')
+      }
+      return {
+        status: 200,
+        message: 'single payment',
+        data: payment
+      };
+    } catch (error) {
+      return {
+        status: 400,
+        message: error.message
+      }
     }
   }
 
-  async updatePaymentStatus(id: number, updatePaymentStatusDto: UpdatePaymentStatusDto){
-    let payment = await this.paymentRepo.findOne({where: {id}})
-    if(!payment){
-      return new NotFoundException('payment not found')
+  async create(body: CreatePaymentDto) {
+    try {
+      let duplicate_name = await this.paymentRepo.findOneBy({ payment_name: body.payment_name });
+      if (duplicate_name) {
+        throw new Error("Payment name already exists!")
+      }
+
+      let payment = this.paymentRepo.create(body)
+      await this.paymentRepo.save(payment)
+      return {
+        status: 201,
+        message: 'success',
+        data: payment
+      }
+    } catch (error) {
+      return {
+        status: 400,
+        message: error.message
+      }
     }
-    payment.status = updatePaymentStatusDto.status
-    await this.paymentRepo.save(payment)
-    return {
-      status: HttpStatus.ACCEPTED,
-      message: 'Payment status updated'
+  }
+
+  async updatePayment(id: number, body: UpdatePaymentDto) {
+    try {
+      let foundPayment = await this.paymentRepo.findOneBy({ id });
+      if (!foundPayment) {
+        throw new Error("Payment is not found!")
+      }
+      let result = await this.paymentRepo.update({ id }, body);
+      if (result.affected > 0) {
+        return {
+          status: 205,
+          message: "successfully updated!"
+        }
+      }
+    } catch (error) {
+      return {
+        status: 400,
+        message: error.message
+      }
     }
   }
 
   async remove(id: number) {
-    let payment = await this.paymentRepo.findOne({where: {id}})
-    if(!payment){
-      return new NotFoundException('payment not found')
-    }
-    await this.paymentRepo.softDelete(id)
-    return {
-      status: HttpStatus.OK,
-      message: "Payment deleted"
+    try {
+      let pay = await this.paymentRepo.findOneBy({ id });
+      if (!pay) {
+        throw new Error("Payment is not found!")
+      }
+      let result = await this.paymentRepo.delete({ id });
+      if (result.affected > 0) {
+        return {
+          status: 204,
+          message: "successfully deleted!"
+        }
+      }
+    } catch (error) {
+      return {
+        status: 400,
+        message: error.message
+      }
     }
   }
 }

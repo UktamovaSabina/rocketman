@@ -9,6 +9,6 @@ export class Complains extends BaseEntity {
   @Column({ type: "text" })
   complain_text: string;
 
-  @ManyToOne(() => Users, (user)=> user.complains)
+  @ManyToOne(() => Users, (user: Users) => user.complains)
   user: Users;
 }
