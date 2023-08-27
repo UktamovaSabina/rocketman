@@ -2,10 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Order } from './entities/order.entity';
+import { CreateOrderDto } from './dto/create-order.dto';
+import { Product } from '../product/entities/product.entity';
 
 @Injectable()
 export class OrderService {
-  constructor(@InjectRepository(Order) private readonly orderRepo: Repository<Order>) { }
+  constructor(@InjectRepository(Order) private readonly orderRepo: Repository<Order>,
+  @InjectRepository(Product) private readonly productRepo: Repository<Product>) { }
 
   async findAll() {
     let orders = await this.orderRepo.find({ relations: { user: true, driver: true, products: true } });
@@ -23,6 +26,40 @@ export class OrderService {
     // console.log(result);
     
     // return result
+  }
+
+  async create(body: CreateOrderDto){
+    try {
+      console.log(body, 'body in service')
+      let products = await Promise.all( body.products.map((async productInfo => {
+        let product = await this.productRepo.findOne({where: {id: productInfo.product_id}})
+        if(!product){
+          throw new Error(`Product with ID ${productInfo.product_id} not found`)
+        }
+        return {...product, count: productInfo.count}
+      })))
+      console.log(products, 'products')
+
+      let newOrder = this.orderRepo.create({
+        payment_type: body.payment_type,
+        longitude: body.longitude,
+        latitude: body.latitude,
+        user: {id: body.user},
+        driver: null,
+      })
+
+      newOrder.products = products.map(productInfo => ({
+        product: productInfo.product,
+        count: productInfo.count,
+      }));
+
+      return 'ok'
+    } catch (error) {
+      return {
+        status: 400,
+        message: error.message
+      }
+    }
   }
 
   //   async create(body: CreateUserDto) {

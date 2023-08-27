@@ -6,10 +6,11 @@ import { Order } from './entities/order.entity';
 import { Users } from '../user/entities/user.entity';
 import { Product } from '../product/entities/product.entity';
 import { Driver } from '../driver/entities/driver.entity';
+import { JwtStrategy } from '../auth/strategy/jwt.strategy';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Order, Users, Product, Driver])],
   controllers: [OrderController],
-  providers: [OrderService],
+  providers: [OrderService, JwtStrategy],
 })
 export class OrderModule {}

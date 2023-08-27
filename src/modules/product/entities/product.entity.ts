@@ -16,7 +16,7 @@ export class Product extends BaseEntity {
   @Column({type: 'varchar'})
   product_image_link: string
 
-  @Column({type: 'numeric'})
+  @Column({type: 'int'})
   product_price: number;
 
   @Column({type: 'boolean'})

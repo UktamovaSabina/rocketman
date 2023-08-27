@@ -2,18 +2,19 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseGua
 import { JwtAuthGuard } from '../auth/guards/jwt.guards';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { OrderService } from './order.service';
+import { CreateOrderDto } from './dto/create-order.dto';
 
 @ApiTags('orders')
 @Controller('orders')
 export class OrderController {
-  constructor(private readonly OrderService: OrderService) { }
+  constructor(private readonly orderService: OrderService) { }
 
   @ApiBearerAuth("defaultBearerAuth")
   @UseGuards(JwtAuthGuard)
   @Get()
   async findAll() {
     try {
-      let orders = await this.OrderService.findAll();
+      let orders = await this.orderService.findAll();
       return {
         status: 200,
         message: "Success",
@@ -30,7 +31,7 @@ export class OrderController {
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
     try {
-      let order = await this.OrderService.findOne(id);
+      let order = await this.orderService.findOne(id);
       if (!order) {
         throw new Error("Order is not found!")
       }
@@ -47,22 +48,11 @@ export class OrderController {
     }
   }
 
-  //   @Post()
-  //   async create(@Body() body: CreateUserDto) {
-  //     try {
-  //       let newUser = await this.OrderService.create(body);
-  //       return {
-  //         status: 201,
-  //         message: "successfully created!",
-  //         data: newUser
-  //       }
-  //     } catch (error) {
-  //       return {
-  //         status: 400,
-  //         message: error.message
-  //       }
-  //     }
-  //   }
+    @Post()
+    async create(@Body() body: CreateOrderDto) {
+      console.log(body, 'body in controller')
+      return await this.orderService.create(body)
+    }
 
   //   @Patch(':id')
   //   async update(@Param('id', ParseIntPipe) id: number, @Body() updateUserDto: UpdateUserDto) {
