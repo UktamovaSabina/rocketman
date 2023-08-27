@@ -6,6 +6,7 @@ import { multerOptions } from 'src/utils/multer';
 import { JwtAuthGuard } from '../auth/guards/jwt.guards';
 import { CreateProductDto } from './dto/create-product.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { UpdateProductDto } from './dto/update-product.dto';
 
 @ApiTags("product")
 @Controller('product')
@@ -32,17 +33,8 @@ export class ProductController {
   @ApiBearerAuth("defaultBearerAuth")
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
-  @UseInterceptors(FileInterceptor('file', multerOptions))
-  async update(@Param('id', ParseIntPipe) id: number, @Body() body: any, @UploadedFile() file: Express.Multer.File) {
-   try {
-    let reqToPass = { ...body, product_image: file.filename, status: body.status == 'true' ? true : false }
-    return await this.productService.update(id, reqToPass);
-   } catch (error) {
-    return {
-      status: 400,
-      message: error.message
-    }
-   }
+  async update(@Param('id', ParseIntPipe) id: number, @Body() body: UpdateProductDto) {
+    return await this.productService.update(id, body);
   }
 
   @ApiBearerAuth("defaultBearerAuth")
