@@ -10,82 +10,109 @@ import { ProductCategory } from '../product_category/entities/product_category.e
 @Injectable()
 export class ProductService {
   constructor(@InjectRepository(Product) private readonly productRepo:Repository<Product>, @InjectRepository(ProductCategory) private readonly productCategoryRepo:Repository<ProductCategory> ){}
-  async create(createProductDto: CreateProductDto) {
-    console.log(createProductDto)
-    let {product_category_id} = createProductDto
-    let product_category = await this.productCategoryRepo.findOne({where: {id: +product_category_id}})
-    if(!product_category){
-      return new NotFoundException("product category not found")
-    }
-    let newProduct = this.productRepo.create({
-      product_name: createProductDto.product_name,
-      product_description: createProductDto.product_description,
-      product_image: createProductDto.product_image,
-      product_image_link: createProductDto.product_image_link,
-      product_price: createProductDto.product_price,
-      status: createProductDto.status,
-      productCategory: product_category
-    })
-    await this.productRepo.save(newProduct)
-    console.log(newProduct)
-
-    return {
-      status: 201,
-      message: "product created",
-      data: newProduct
-    };
-  }
-
+  
   async findAll() {
-    let products = await this.productRepo.find({relations: ["productCategory"]})
-    return {
-      status: 200,
-      message: 'all products',
-      data: products
+    try {
+      let products = await this.productRepo.find({relations: {productCategory: true}})
+      return {
+        status: 200,
+        message: 'all products',
+       data: products
+      }
+    } catch (error) {
+      return {
+        status: 400,
+        message: error.message
+      }
     }
   }
 
   async findOne(id: number) {
-    let product = await this.productRepo.findOne({where: {id}, relations: ["productCategory"]})
+   try {
+    let product = await this.productRepo.findOne({where: {id}, relations: {productCategory: true}})
     if(!product){
-      return new NotFoundException('product is not found')
+      throw new Error('product is not found')
     }
     return {
       status: 200,
       message: 'single product',
       data: product
     }
+   } catch (error) {
+    return {
+      status: 400,
+      message: error.message
+    }
+   }
   }
 
-  async update(id: number, updateProductDto: UpdateProductDto) {
-    let product = await this.productRepo.findOne({where: {id}})
-    if(!product){
-      return new NotFoundException("Product not found")
-    }
-      product.product_name = updateProductDto.product_name || product.product_name
-      product.product_description = updateProductDto.product_description || product.product_description
-      product.product_image = updateProductDto.product_image || product.product_image
-      product.product_image_link = updateProductDto.product_image_link || product.product_image_link
-      product.product_price = updateProductDto.product_price || product.product_price
-      product.status = updateProductDto.status
-    await this.productRepo.save(product)
+  async create(body: CreateProductDto) {
+    console.log(body)
+    try {
+      let foundProduct = await this.productRepo.findOneBy({product_name: body.product_name})
+      if(!foundProduct){
+        throw new Error('Product already exists')
+      }
+      let foundProductCategory = await this.productCategoryRepo.findOne({where: {id: body.productCategory}})
+      if(!foundProductCategory){
+        throw new Error('Product Category not found')
+      }
 
-    return {
-      status: 200,
-      message: "product updated",
-      data: product
+      let newProduct = this.productRepo.create({...body, productCategory: {id: body.productCategory}})
+      await this.productRepo.save(newProduct)
+      return {
+        status: 201,
+        message: 'success',
+        data: newProduct
+      }
+
+    } catch (error) {
+      return {
+        status: 400,
+        message: error.message
+      }
+    }
+  }
+
+  async update(id: number, body: UpdateProductDto) {
+    try {
+      let foundProduct = await this.productRepo.findOne({where: {id}, relations: {productCategory: true}})
+      if(!foundProduct){
+        throw new Error('Product is not found')
+      }
+      let product = await this.productRepo.update({id}, {...body, productCategory: {id: foundProduct.productCategory.id}})
+      if(product.affected > 0){
+        return {
+          status: 205,
+          message: 'successfully updated'
+        }
+      }
+    } catch (error) {
+      return {
+        status: 400,
+        message: error.message
+      }
     }
   }
 
   async remove(id: number) {
-    let product = await this.productRepo.findOne({where: {id}})
-    if(!product){
-      return new NotFoundException("Product not found")
-    }
-    await this.productRepo.remove(product)
-    return {
-      status: 200,
-      message: 'product deleted'
+    try {
+      let foundProduct = await this.productRepo.findOne({where: {id}, relations: {productCategory: true}})
+      if(!foundProduct){
+        throw new Error('Product is not found')
+      }
+      let deletedProduct = await this.productRepo.delete({id})
+      if(deletedProduct.affected > 0){
+        return {
+          status: 204,
+          message: 'successfully deleted'
+        }
+      }
+    } catch (error) {
+      return {
+        status: 400,
+        message: error.message
+      }
     }
   }
 }

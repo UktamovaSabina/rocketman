@@ -1,7 +1,8 @@
-import { IsBoolean, IsNumber, IsString } from "class-validator";
+import { IsBoolean, IsNumber, IsString, Length } from "class-validator";
 
 export class CreateProductDto {
   @IsString()
+  @Length(3)
   product_name: string;
 
   @IsString()
@@ -20,5 +21,5 @@ export class CreateProductDto {
   status: boolean;
 
   @IsNumber()
-  product_category_id: number;
+  productCategory: number;
 }

@@ -16,8 +16,8 @@ export class StoreController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.storeService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.storeService.findOne(id);
   }
 
   @ApiBearerAuth("defaultBearerAuth")

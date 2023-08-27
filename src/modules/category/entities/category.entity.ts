@@ -12,6 +12,6 @@ export class Category extends BaseEntity {
   @Column({ type: "boolean" })
   status: boolean;
 
-  @OneToMany(() => Store, (store) => store.categoryId)
+  @OneToMany(() => Store, (store) => store.category)
   stores: Store
 }
