@@ -1,5 +1,4 @@
 import { Driver } from "src/modules/driver/entities/driver.entity";
-import { Product } from "src/modules/product/entities/product.entity";
 import { Users } from "src/modules/user/entities/user.entity";
 import { BaseEntity, Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { SubOrder } from "./subOrder.entity";
