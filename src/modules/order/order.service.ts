@@ -2,61 +2,179 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Order } from './entities/order.entity';
+import { CreateOrderDto } from './dto/create-order.dto';
+import { Product } from '../product/entities/product.entity';
+import { Users } from '../user/entities/user.entity';
+import { SubOrder } from './entities/subOrder.entity';
+import { UpdateOrderDriverDto } from './dto/update-order.dto';
+import { Driver } from '../driver/entities/driver.entity';
+import { UpdateOrderStatusDto } from './dto/update-orderStatus.dto';
 
 @Injectable()
 export class OrderService {
-  constructor(@InjectRepository(Order) private readonly orderRepo: Repository<Order>) { }
+  constructor(@InjectRepository(Order) private readonly orderRepo: Repository<Order>,
+  @InjectRepository(Product) private readonly productRepo: Repository<Product>,
+  @InjectRepository(Users) private readonly userRepo: Repository<Users>,
+  @InjectRepository(Driver) private readonly driverRepo: Repository<Driver>) { }
 
   async findAll() {
-    let orders = await this.orderRepo.find({ relations: { user: true, driver: true, products: true } });
-    return orders
+    try {
+      let orders = await this.orderRepo.find({ relations: { user: true, driver: true, orders: true} });
+      return {
+        status: 200,
+        message: 'success',
+        data: orders
+      }
+    } catch (error) {
+      return {
+        status: 400,
+        message: error.message
+      }
+    }
   }
 
   async findOne(id: number) {
-    let result = await this.orderRepo.findOne({
-      where: { id }, relations: { user: true, driver: true, products: true },
-    });
-    console.log(result);
+    try {
+      let order = await this.orderRepo.findOne({
+        where: { id }, relations: { user: true, driver: true, orders: true },
+      });
+      
+      if(!order){
+        throw new Error('Order by id is not found')
+      }
 
-    return result
-    // let result = await this.orderRepo.findOneBy({id});
-    // console.log(result);
-
-    // return result
+      return {
+        status: 200,
+        message: 'success',
+        data: order
+      }
+    } catch (error) {
+      return {
+        status: 400,
+        message: error.message
+      }
+    }
   }
 
-  //   async create(body: CreateUserDto) {
-  //     let duplicate = await this.orderRepo.findOneBy({ id: body.id });
-  //     if (duplicate) {
-  //       throw new Error("id already exists")
-  //     }
-  //     if (!body.phone_number.startsWith("+998")) {
-  //       throw new Error("Phone number must start with +998")
-  //     }
-  //     const user = this.orderRepo.create(body);
-  //     this.orderRepo.save(user);
-  //     return user
-  //   }
+  async create(body: CreateOrderDto){
+    try {
+      const user = await this.userRepo.findOne({where: {id: body.user}});
+        if (!user) {
+            throw new Error('user not found');
+        }
+      const order = new Order()
+      order.latitude = body.latitude
+      order.longitude = body.longitude
+      order.payment_type = body.payment_type
+      order.user = user
+      order.driver = null
+      order.orders = []
 
-  //   async update(id: number, body: UpdateUserDto) {
-  //     let foundUser = await this.orderRepo.findOneBy({ id });
-  //     if (!foundUser) {
-  //       throw new Error("User is not found!")
-  //     }
-  //     if (body.id) {
-  //       throw new Error("Id is not changeable!")
-  //     }
-  //     if (body.phone_number && !body.phone_number?.startsWith("+998")) {
-  //       throw new Error("Phone number must start with +998")
-  //     }
-  //     return await this.orderRepo.update({ id }, body);
-  //   }
+      for(let item of body.products){
+        let product = await this.productRepo.findOne({where: {id: item.product_id}})
+        if(product){
+          let subProducts = new SubOrder()
+          subProducts.product = product
+          subProducts.count = item.count
+          order.orders.push(subProducts)
+        } else {
+          throw new Error(`product with ID: ${item.product_id} is not found`)
+        }
+      }
 
-  //   async delete(id: number) {
-  //     let foundUser = await this.orderRepo.findOneBy({ id });
-  //     if (!foundUser) {
-  //       throw new Error("User is not found!")
-  //     }
-  //     return await this.orderRepo.delete({ id });
-  //   }
+      await this.orderRepo.save(order)
+      return {
+        status: 201,
+        message: "ok",
+        data: order
+      }
+    } catch (error) {
+      return {
+        status: 400,
+        message: error.message
+      }
+    }
+  }
+  
+  async updateDriver(id: number, body: UpdateOrderDriverDto){
+    try {
+      let foundOrder = await this.orderRepo.findOne({where: {id}})
+      if(!foundOrder){
+        throw new Error(`Order with ${id} not found`)
+      }
+      let foundDriver = await this.driverRepo.findOne({where: {id: body.driver}})
+      if(!foundDriver){
+        throw new Error(`Driver with ${body.driver} not found`)
+      }
+
+      let orders = await this.orderRepo.update({id}, {driver: {id: body.driver}})
+      let updateDriver = await this.driverRepo.update({id: body.driver}, {status: false})
+      if(orders.affected > 0 && updateDriver.affected > 0){
+        return {
+          status: 204,
+          message: 'successfully updated'
+        }
+      } else {
+        throw new Error('something went wrong')
+      }
+    } catch (error) {
+      return {
+        status: 400,
+        message: error.message
+      }
+    }
+  }
+
+  async updateStatus(id: number, body: UpdateOrderStatusDto){
+    try {
+      let foundOrder = await this.orderRepo.findOne({where: {id}})
+      if(!foundOrder){
+        throw new Error(`Order with ${id} not found`)
+      }
+      let foundDriver = await this.driverRepo.findOne({where: {id: body.driver}})
+      if(!foundDriver){
+        throw new Error(`Driver with ${body.driver} not found`)
+      }
+      let order = {status: body.status}
+      if(body.status === "bekor" || body.status === "yakun"){
+        await this.driverRepo.update({id: body.driver}, {status: true})
+      }
+
+      let orders = await this.orderRepo.update({id}, order)
+      if(orders.affected > 0){
+        return {
+          status: 204,
+          message: 'successfully updated'
+        }
+      } else {
+        throw new Error('something went wrong')
+      }
+    } catch (error) {
+      return {
+        status: 400,
+        message: error.message
+      }
+    }
+  }
+
+  async delete(id: number){
+    try {
+      let order = await this.orderRepo.findOne({where: {id}})
+      if(!order){
+        throw new Error(`Order with ID ${id} not found`)
+      }
+      let deleteOrder = await this.orderRepo.delete({id})
+      if(deleteOrder.affected > 0){
+        return {
+          status: 205,
+          message: 'successfully deleted'
+        }
+      }
+    } catch (error) {
+      return {
+        status: 400,
+        message: error.message
+      }
+    }
+  }
 }

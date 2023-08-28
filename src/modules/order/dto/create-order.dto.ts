@@ -1,19 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsNotEmpty, IsString, IsArray, ArrayNotEmpty, IsNumber } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsString, IsArray, ArrayNotEmpty, IsNumber, ValidateNested } from 'class-validator';
 
-enum Order_status {
-  BUYURTMA = "buyurtma",
-  QABUL = "qabul",
-  YETKAZISH = "yetkazish",
-  YAKUN = "yakun",
-  BEKOR = "bekor"
+class ProductInfo {
+  @ApiProperty({ type: Number, example: 1 })
+  @IsNumber()
+  product_id: number;
+
+  @ApiProperty({ type: Number, example: 2 })
+  @IsNumber()
+  count: number;
 }
 
 export class CreateOrderDto {
-  @ApiProperty({ type: Order_status })
-  @IsNotEmpty()
-  @IsEnum(Order_status)
-  status: Order_status;
 
   @ApiProperty({ type: String, example: "cash" })
   @IsNotEmpty()
@@ -30,11 +28,11 @@ export class CreateOrderDto {
   @IsString()
   latitude: string;
 
-  @ApiProperty({ type: Array, example: [1, 2, 3], description: "array of products ID" })
+  @ApiProperty({ type: [ProductInfo], example: [{ "product_id": 1, "count": 2 }] })
+  @IsNotEmpty()
   @IsArray()
   @ArrayNotEmpty()
-  @IsNumber()
-  products: number[];
+  products: ProductInfo[];
 
   @ApiProperty({ type: Number, example: 1, description: "existing user ID" })
   @IsNotEmpty()
