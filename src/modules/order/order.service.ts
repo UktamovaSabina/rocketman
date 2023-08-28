@@ -34,18 +34,6 @@ export class OrderService {
   }
 
   async findOne(id: number) {
-<<<<<<< HEAD
-    let result = await this.orderRepo.findOne({
-      where: { id }, relations: { user: true, driver: true, products: true },
-    });
-    console.log(result);
-
-    return result
-    // let result = await this.orderRepo.findOneBy({id});
-    // console.log(result);
-
-    // return result
-=======
     try {
       let order = await this.orderRepo.findOne({
         where: { id }, relations: { user: true, driver: true, orders: true },
@@ -106,7 +94,6 @@ export class OrderService {
         message: error.message
       }
     }
->>>>>>> dev
   }
   
   async updateDriver(id: number, body: UpdateOrderDriverDto){

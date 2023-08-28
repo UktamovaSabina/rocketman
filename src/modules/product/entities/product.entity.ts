@@ -17,11 +17,8 @@ export class Product extends BaseEntity {
   @Column({ type: 'varchar' })
   product_image_link: string
 
-<<<<<<< HEAD
-  @Column({ type: 'int' })
-=======
+
   @Column({type: 'int'})
->>>>>>> dev
   product_price: number;
 
   @Column({ type: 'boolean' })
@@ -30,14 +27,6 @@ export class Product extends BaseEntity {
   @ManyToOne(() => ProductCategory, (productCategory: ProductCategory) => productCategory.products)
   productCategory: ProductCategory;
 
-<<<<<<< HEAD
-  @ManyToMany(() => Order, (order: Order) => order.products)
-  orders: Order[];
-=======
   @OneToMany(() => SubOrder, (subOrder) => subOrder.product)
   subOrders: SubOrder[];
-
-  // @ManyToMany(() => Order, order => order.products)
-  // orders: Order[];
->>>>>>> dev
 }

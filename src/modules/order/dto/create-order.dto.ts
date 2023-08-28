@@ -28,18 +28,12 @@ export class CreateOrderDto {
   @IsString()
   latitude: string;
 
-<<<<<<< HEAD
-  @ApiProperty({ type: Array, example: [1, 2, 3], description: "array of products ID" })
-=======
   @ApiProperty({ type: [ProductInfo], example: [{ "product_id": 1, "count": 2 }] })
   @IsNotEmpty()
->>>>>>> dev
   @IsArray()
   @ArrayNotEmpty()
-  // @ValidateNested({ each: true })
   products: ProductInfo[];
 
-<<<<<<< HEAD
   @ApiProperty({ type: Number, example: 1, description: "existing user ID" })
   @IsNotEmpty()
   @IsNumber()
@@ -49,10 +43,4 @@ export class CreateOrderDto {
   @IsNotEmpty()
   @IsNumber()
   driver: number;
-=======
-  @ApiProperty({ type: Number, example: 1 })
-  @IsNotEmpty()
-  @IsNumber()
-  user: number;
->>>>>>> dev
 }
