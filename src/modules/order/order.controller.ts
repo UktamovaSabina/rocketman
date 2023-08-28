@@ -2,101 +2,45 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseGua
 import { JwtAuthGuard } from '../auth/guards/jwt.guards';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { OrderService } from './order.service';
+import { CreateOrderDto } from './dto/create-order.dto';
+import { UpdateOrderDriverDto } from './dto/update-order.dto';
+import { UpdateOrderStatusDto } from './dto/update-orderStatus.dto';
 
 @ApiTags('orders')
 @Controller('orders')
 export class OrderController {
-  constructor(private readonly OrderService: OrderService) { }
+  constructor(private readonly orderService: OrderService) { }
 
   @ApiBearerAuth("defaultBearerAuth")
   @UseGuards(JwtAuthGuard)
   @Get()
   async findAll() {
-    try {
-      let orders = await this.OrderService.findAll();
-      return {
-        status: 200,
-        message: "Success",
-        data: orders
-      }
-    } catch (error) {
-      return {
-        status: 400,
-        message: error.message
-      }
-    }
+    return await this.orderService.findAll()
   }
 
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
-    try {
-      let order = await this.OrderService.findOne(id);
-      if (!order) {
-        throw new Error("Order is not found!")
-      }
-      return {
-        status: 200,
-        message: "success",
-        data: order
-      }
-    } catch (error) {
-      return {
-        status: 400,
-        message: error.message
-      }
-    }
+    return await this.orderService.findOne(id)
   }
 
-  //   @Post()
-  //   async create(@Body() body: CreateUserDto) {
-  //     try {
-  //       let newUser = await this.OrderService.create(body);
-  //       return {
-  //         status: 201,
-  //         message: "successfully created!",
-  //         data: newUser
-  //       }
-  //     } catch (error) {
-  //       return {
-  //         status: 400,
-  //         message: error.message
-  //       }
-  //     }
-  //   }
+    @Post()
+    async create(@Body() body: CreateOrderDto) {
+      console.log(body, 'body in controller')
+      return await this.orderService.create(body)
+    }
 
-  //   @Patch(':id')
-  //   async update(@Param('id', ParseIntPipe) id: number, @Body() updateUserDto: UpdateUserDto) {
-  //     try {
-  //       let user = await this.OrderService.update(id, updateUserDto);
-  //       if (user.affected > 0) {
-  //         return {
-  //           status: 205,
-  //           message: "successfully updated!"
-  //         }
-  //       }
-  //     } catch (error) {
-  //       return {
-  //         status: 400,
-  //         message: error.message
-  //       }
-  //     }
-  //   }
+    @Patch('drivers/:id')
+    async updateDriver(@Param('id', ParseIntPipe) id: number, @Body() body: UpdateOrderDriverDto) {
+        return await this.orderService.updateDriver(id, body);
+    }
 
-  //   @Delete(':id')
-  //   async remove(@Param('id', ParseIntPipe) id: number) {
-  //     try {
-  //       let user = await this.OrderService.delete(id);
-  //       if (user.affected > 0) {
-  //         return {
-  //           status: 204,
-  //           message: "successfully deleted!"
-  //         }
-  //       }
-  //     } catch (error) {
-  //       return {
-  //         status: 400,
-  //         message: error.message
-  //       }
-  //     }
-  //   }
+    @Patch('status/:id')
+    async updateStatus(@Param('id', ParseIntPipe) id: number, @Body() body: UpdateOrderStatusDto) {
+        return await this.orderService.updateStatus(id, body);
+    }
+
+    @Delete(':id')
+    async remove(@Param('id', ParseIntPipe) id: number) {
+      return await this.orderService.delete(id)
+    }
 }

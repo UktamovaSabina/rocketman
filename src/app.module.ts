@@ -34,8 +34,8 @@ import { PaymentModule } from './modules/payment/payment.module';
     StoreModule,
     ProductCategoryModule,
     ProductModule,
-    PaymentModule
-    // OrderModule,
+    PaymentModule,
+    OrderModule,
   ],
   controllers: [],
 })
