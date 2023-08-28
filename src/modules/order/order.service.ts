@@ -1,3 +1,4 @@
+import { Length } from 'class-validator';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -19,7 +20,29 @@ export class OrderService {
 
   async findAll() {
     try {
-      let orders = await this.orderRepo.find({ relations: { user: true, driver: true, orders: true} });
+      let allOrders = await this.orderRepo.find({ relations: { user: true, driver: true, orders: true} });
+      let orders = JSON.parse(JSON.stringify(allOrders));
+
+      if(!orders.length){
+        return {
+          status: 200,
+          message: 'all orders',
+          data: orders
+        }
+      }
+
+      for (const order of orders) {
+        let totalPrice = 0;
+
+        for (const orderItem of order.orders) {
+          const productPrice = orderItem.product.product_price;
+          const itemCount = orderItem.count;
+          const subtotal = productPrice * itemCount;
+          totalPrice += subtotal;
+        }
+
+        order.totalPrice = totalPrice;
+      }
       return {
         status: 200,
         message: 'success',
@@ -45,8 +68,6 @@ export class OrderService {
         const subtotal = productPrice * itemCount;
         return total + subtotal;
     }, 0);
-
-    console.log(totalPrice)
       if(!order){
         throw new Error('Order by id is not found')
       }
