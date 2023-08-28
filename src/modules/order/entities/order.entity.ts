@@ -1,7 +1,8 @@
 import { Driver } from "src/modules/driver/entities/driver.entity";
 import { Product } from "src/modules/product/entities/product.entity";
 import { Users } from "src/modules/user/entities/user.entity";
-import { BaseEntity, Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { SubOrder } from "./subOrder.entity";
 
 enum Order_status {
   BUYURTMA = "buyurtma",
@@ -28,7 +29,7 @@ export class Order extends BaseEntity {
   @Column({ type: "varchar" })
   latitude: string;
 
-  @Column({ type: "date" })
+  @CreateDateColumn({ type: "date" })
   created_at: Date
 
   @ManyToOne(() => Users, user => user.orders)
@@ -37,12 +38,10 @@ export class Order extends BaseEntity {
   @ManyToOne(() => Driver, driver => driver.orders)
   driver: Driver;
 
-  @ManyToMany(() => Product, {eager: true})
-  @JoinTable({
-    name: 'order_product', // Change this to your actual join table name
-    joinColumn: { name: 'order_id', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'product_id', referencedColumnName: 'id' },
-  })
-  products: Product[];
+  // @ManyToMany(() => Product, products=>products.orders)
+  // @JoinTable()
+  // products: Product[];
 
+  @OneToMany(() => SubOrder, (subOrder) => subOrder.order, { cascade: true })
+  orders: SubOrder[];
 }

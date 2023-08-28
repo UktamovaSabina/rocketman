@@ -1,6 +1,7 @@
 import { Order } from "src/modules/order/entities/order.entity";
+import { SubOrder } from "src/modules/order/entities/subOrder.entity";
 import { ProductCategory } from "src/modules/product_category/entities/product_category.entity";
-import { BaseEntity, Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Product extends BaseEntity {
@@ -25,6 +26,9 @@ export class Product extends BaseEntity {
   @ManyToOne(() => ProductCategory, productCategory => productCategory.products)
   productCategory: ProductCategory;
 
-  @ManyToMany(() => Order, order => order.products)
-  orders: Order[];
+  @OneToMany(() => SubOrder, (subOrder) => subOrder.product)
+  subOrders: SubOrder[];
+
+  // @ManyToMany(() => Order, order => order.products)
+  // orders: Order[];
 }
