@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
@@ -6,8 +6,6 @@ import { RegisterDto } from './dto/register.dto';
 import { UpdateAdminDto } from './dto/update-admin.dto';
 import { JwtAuthGuard } from './guards/jwt.guards';
 
-@ApiBearerAuth('defaultBearerAuth')
-@UseGuards(JwtAuthGuard)
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
@@ -48,6 +46,26 @@ export class AuthController {
         return {
           status: 205,
           message: "successfully updated!"
+        }
+      }
+    } catch (error) {
+      return {
+        status: 400,
+        message: error.message
+      }
+    }
+  }
+
+  @ApiBearerAuth('defaultBearerAuth')
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id')
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    try {
+      let admin = await this.authService.delete(id);
+      if (admin.affected > 0) {
+        return {
+          status: 204,
+          message: "successfully deleted!"
         }
       }
     } catch (error) {

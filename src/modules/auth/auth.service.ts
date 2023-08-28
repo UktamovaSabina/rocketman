@@ -67,4 +67,12 @@ export class AuthService {
     
     return await this.adminRepo.update({ id }, body);
   }
+
+  async delete(id: number) {
+    let foundAdmin = await this.adminRepo.findOneBy({ id });
+    if (!foundAdmin) {
+      throw new Error("Admin is not found!")
+    }
+    return await this.adminRepo.delete({ id });
+  }
 }
