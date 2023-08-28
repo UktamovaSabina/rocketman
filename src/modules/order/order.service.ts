@@ -39,6 +39,13 @@ export class OrderService {
         where: { id }, relations: { user: true, driver: true, orders: true },
       });
 
+      const totalPrice = order.orders.reduce((total, orderItem) => {
+        const productPrice = orderItem.product.product_price;
+        const itemCount = orderItem.count;
+        const subtotal = productPrice * itemCount;
+        return total + subtotal;
+      }, 0);
+
       if (!order) {
         throw new Error('Order by id is not found')
       }
@@ -46,7 +53,8 @@ export class OrderService {
       return {
         status: 200,
         message: 'success',
-        data: order
+        data: order,
+        totalPrice
       }
     } catch (error) {
       return {

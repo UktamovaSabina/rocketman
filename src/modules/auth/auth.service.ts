@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { RegisterDto } from './dto/register.dto';
+import { UpdateAdminDto } from './dto/update-admin.dto';
 
 @Injectable()
 export class AuthService {
@@ -57,4 +58,13 @@ export class AuthService {
     }
   }
 
+
+  async update(id: number, body: UpdateAdminDto) {
+    let foundAdmin = await this.adminRepo.findOneBy({ id });
+    if (!foundAdmin) {
+      throw new Error("Admin is not found!")
+    }
+    
+    return await this.adminRepo.update({ id }, body);
+  }
 }
