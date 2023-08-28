@@ -11,7 +11,7 @@ import { UpdateOrderStatusDto } from './dto/update-orderStatus.dto';
 export class OrderController {
   constructor(private readonly orderService: OrderService) { }
 
-  
+
   @Get()
   async findAll() {
     return await this.orderService.findAll()
@@ -33,15 +33,15 @@ export class OrderController {
   @UseGuards(JwtAuthGuard)
   @Patch('drivers/:id')
   async updateDriver(@Param('id', ParseIntPipe) id: number, @Body() body: UpdateOrderDriverDto) {
-      return await this.orderService.updateDriver(id, body);
+    return await this.orderService.updateDriver(id, body);
   }
 
   @ApiBearerAuth("defaultBearerAuth")
   @UseGuards(JwtAuthGuard)
-    @Patch('status/:id')
-    async updateStatus(@Param('id', ParseIntPipe) id: number, @Body() body: UpdateOrderStatusDto) {
-        return await this.orderService.updateStatus(id, body);
-    }
+  @Patch('status/:id')
+  async updateStatus(@Param('id', ParseIntPipe) id: number, @Body() body: UpdateOrderStatusDto) {
+    return await this.orderService.updateStatus(id, body);
+  }
 
   @ApiBearerAuth("defaultBearerAuth")
   @UseGuards(JwtAuthGuard)

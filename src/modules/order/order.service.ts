@@ -13,13 +13,13 @@ import { UpdateOrderStatusDto } from './dto/update-orderStatus.dto';
 @Injectable()
 export class OrderService {
   constructor(@InjectRepository(Order) private readonly orderRepo: Repository<Order>,
-  @InjectRepository(Product) private readonly productRepo: Repository<Product>,
-  @InjectRepository(Users) private readonly userRepo: Repository<Users>,
-  @InjectRepository(Driver) private readonly driverRepo: Repository<Driver>) { }
+    @InjectRepository(Product) private readonly productRepo: Repository<Product>,
+    @InjectRepository(Users) private readonly userRepo: Repository<Users>,
+    @InjectRepository(Driver) private readonly driverRepo: Repository<Driver>) { }
 
   async findAll() {
     try {
-      let orders = await this.orderRepo.find({ relations: { user: true, driver: true, orders: true} });
+      let orders = await this.orderRepo.find({ relations: { user: true, driver: true, orders: true } });
       return {
         status: 200,
         message: 'success',
@@ -38,8 +38,8 @@ export class OrderService {
       let order = await this.orderRepo.findOne({
         where: { id }, relations: { user: true, driver: true, orders: true },
       });
-      
-      if(!order){
+
+      if (!order) {
         throw new Error('Order by id is not found')
       }
 
@@ -56,12 +56,12 @@ export class OrderService {
     }
   }
 
-  async create(body: CreateOrderDto){
+  async create(body: CreateOrderDto) {
     try {
-      const user = await this.userRepo.findOne({where: {id: body.user}});
-        if (!user) {
-            throw new Error('user not found');
-        }
+      const user = await this.userRepo.findOne({ where: { id: body.user } });
+      if (!user) {
+        throw new Error('user not found');
+      }
       const order = new Order()
       order.latitude = body.latitude
       order.longitude = body.longitude
@@ -70,9 +70,9 @@ export class OrderService {
       order.driver = null
       order.orders = []
 
-      for(let item of body.products){
-        let product = await this.productRepo.findOne({where: {id: item.product_id}})
-        if(product){
+      for (let item of body.products) {
+        let product = await this.productRepo.findOne({ where: { id: item.product_id } })
+        if (product) {
           let subProducts = new SubOrder()
           subProducts.product = product
           subProducts.count = item.count
@@ -95,21 +95,21 @@ export class OrderService {
       }
     }
   }
-  
-  async updateDriver(id: number, body: UpdateOrderDriverDto){
+
+  async updateDriver(id: number, body: UpdateOrderDriverDto) {
     try {
-      let foundOrder = await this.orderRepo.findOne({where: {id}})
-      if(!foundOrder){
+      let foundOrder = await this.orderRepo.findOne({ where: { id } })
+      if (!foundOrder) {
         throw new Error(`Order with ${id} not found`)
       }
-      let foundDriver = await this.driverRepo.findOne({where: {id: body.driver}})
-      if(!foundDriver){
+      let foundDriver = await this.driverRepo.findOne({ where: { id: body.driver } })
+      if (!foundDriver) {
         throw new Error(`Driver with ${body.driver} not found`)
       }
 
-      let orders = await this.orderRepo.update({id}, {driver: {id: body.driver}})
-      let updateDriver = await this.driverRepo.update({id: body.driver}, {status: false})
-      if(orders.affected > 0 && updateDriver.affected > 0){
+      let orders = await this.orderRepo.update({ id }, { driver: { id: body.driver } })
+      let updateDriver = await this.driverRepo.update({ id: body.driver }, { status: false })
+      if (orders.affected > 0 && updateDriver.affected > 0) {
         return {
           status: 204,
           message: 'successfully updated'
@@ -125,23 +125,23 @@ export class OrderService {
     }
   }
 
-  async updateStatus(id: number, body: UpdateOrderStatusDto){
+  async updateStatus(id: number, body: UpdateOrderStatusDto) {
     try {
-      let foundOrder = await this.orderRepo.findOne({where: {id}})
-      if(!foundOrder){
+      let foundOrder = await this.orderRepo.findOne({ where: { id } })
+      if (!foundOrder) {
         throw new Error(`Order with ${id} not found`)
       }
-      let foundDriver = await this.driverRepo.findOne({where: {id: body.driver}})
-      if(!foundDriver){
+      let foundDriver = await this.driverRepo.findOne({ where: { id: body.driver } })
+      if (!foundDriver) {
         throw new Error(`Driver with ${body.driver} not found`)
       }
-      let order = {status: body.status}
-      if(body.status === "bekor" || body.status === "yakun"){
-        await this.driverRepo.update({id: body.driver}, {status: true})
+      let order = { status: body.status }
+      if (body.status === "bekor" || body.status === "yakun") {
+        await this.driverRepo.update({ id: body.driver }, { status: true })
       }
 
-      let orders = await this.orderRepo.update({id}, order)
-      if(orders.affected > 0){
+      let orders = await this.orderRepo.update({ id }, order)
+      if (orders.affected > 0) {
         return {
           status: 204,
           message: 'successfully updated'
@@ -157,14 +157,14 @@ export class OrderService {
     }
   }
 
-  async delete(id: number){
+  async delete(id: number) {
     try {
-      let order = await this.orderRepo.findOne({where: {id}})
-      if(!order){
+      let order = await this.orderRepo.findOne({ where: { id } })
+      if (!order) {
         throw new Error(`Order with ID ${id} not found`)
       }
-      let deleteOrder = await this.orderRepo.delete({id})
-      if(deleteOrder.affected > 0){
+      let deleteOrder = await this.orderRepo.delete({ id })
+      if (deleteOrder.affected > 0) {
         return {
           status: 205,
           message: 'successfully deleted'
