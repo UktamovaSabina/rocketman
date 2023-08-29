@@ -38,9 +38,4 @@ export class CreateOrderDto {
   @IsNotEmpty()
   @IsNumber()
   user: number;
-
-  @ApiProperty({ type: Number, example: 1, description: "existing driver ID" })
-  @IsNotEmpty()
-  @IsNumber()
-  driver: number;
 }
