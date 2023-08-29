@@ -8,7 +8,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use('/uploads', express.static(resolve('uploads')))
-  app.enableCors({origin: "*"})
+  app.enableCors({ origin: "*" })
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }))
   const config = new DocumentBuilder()
     .setTitle('Rocketman')
