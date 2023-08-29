@@ -161,6 +161,8 @@ export class OrderService {
       let foundOrder = await this.orderRepo.findOne({ where: { id } })
       if (!foundOrder) {
         throw new Error(`Order with ${id} not found`)
+      } else if (foundOrder.status == "bekor" || foundOrder.status == "yakun"){
+        throw new Error('You can not change status')
       }
       let foundDriver = await this.driverRepo.findOne({ where: { id: body.driver } })
       if (!foundDriver) {
