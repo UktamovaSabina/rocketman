@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseGuards, Query } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt.guards';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDriverDto } from './dto/update-order.dto';
 import { UpdateOrderStatusDto } from './dto/update-orderStatus.dto';
+import { FindOrderStatus } from './dto/find-order.dto';
 
 @ApiTags('orders')
 @Controller('orders')
@@ -12,8 +13,8 @@ export class OrderController {
   constructor(private readonly orderService: OrderService) { }
 
   @Get()
-  async findAll() {
-    return await this.orderService.findAll()
+  async findAll(@Query('status') status: string) {
+    return await this.orderService.findAll(status)
   }
 
   @Get(':id')
