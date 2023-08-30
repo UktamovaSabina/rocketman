@@ -16,10 +16,10 @@ export class Users extends BaseEntity {
   @Column({ type: "varchar" })
   phone_number: string
 
-  @OneToMany(() => Complains, (complain) => complain.user)
+  @OneToMany(() => Complains, (complain) => complain.user, {cascade: true})
   complains: Complains[]
 
-  @OneToMany(() => Order, order => order.user)
+  @OneToMany(() => Order, order => order.user, {cascade: true})
   orders: Order[]
 }
 

@@ -16,10 +16,5 @@ export class UpdateOrderStatusDto extends PartialType(CreateOrderDto)  {
   @ApiProperty({type: String, example: "qabul", description: "order status"})
   @IsEnum(Order_status)
   status: Order_status
-  
-  @ApiProperty({type: Number, example: 1, description: "existing driver ID"})
-  @IsNotEmpty()
-  @IsNumber()
-  driver: number;
 }
 

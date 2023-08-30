@@ -27,6 +27,6 @@ export class Product extends BaseEntity {
   @ManyToOne(() => ProductCategory, (productCategory: ProductCategory) => productCategory.products)
   productCategory: ProductCategory;
 
-  @OneToMany(() => SubOrder, (subOrder) => subOrder.product)
+  @OneToMany(() => SubOrder, (subOrder) => subOrder.product, {cascade: true})
   subOrders: SubOrder[];
 }

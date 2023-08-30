@@ -16,7 +16,7 @@ export class ProductCategory extends BaseEntity {
   @ManyToOne(() => Store, (store: Store) => store.productCategories)
   store: Store;
 
-  @OneToMany(() => Product, product => product.productCategory)
+  @OneToMany(() => Product, product => product.productCategory, {cascade: true})
   products: Product;
 
 }
