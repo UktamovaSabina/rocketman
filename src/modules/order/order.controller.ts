@@ -11,7 +11,6 @@ import { UpdateOrderStatusDto } from './dto/update-orderStatus.dto';
 export class OrderController {
   constructor(private readonly orderService: OrderService) { }
 
-
   @Get()
   async findAll() {
     return await this.orderService.findAll()

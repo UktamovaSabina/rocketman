@@ -10,7 +10,11 @@ import * as dotenv from 'dotenv'
 dotenv.config()
 
 @Module({
-  imports: [PassportModule, TypeOrmModule.forFeature([Admin]), JwtModule.register({ secret: process.env.SECRET_KEY, signOptions: { expiresIn: '1d' } })],
+  imports: [
+    PassportModule,
+    TypeOrmModule.forFeature([Admin]),
+    JwtModule.register({ secret: process.env.SECRET_KEY, signOptions: { expiresIn: '1d' } }),
+  ],
   providers: [AuthService, JwtStrategy],
   controllers: [AuthController]
 })

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsNotEmpty, IsString, IsArray, ArrayNotEmpty, IsNumber, ValidateNested } from 'class-validator';
+import { IsNotEmpty, IsString, IsArray, ArrayNotEmpty, IsNumber } from 'class-validator';
 
 class ProductInfo {
   @ApiProperty({ type: Number, example: 1 })

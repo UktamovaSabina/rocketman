@@ -11,6 +11,8 @@ import { JwtAuthGuard } from './guards/jwt.guards';
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
+  @ApiBearerAuth('defaultBearerAuth')
+  @UseGuards(JwtAuthGuard)
   @Get()
   getAll() {
     return this.authService.getAll();
