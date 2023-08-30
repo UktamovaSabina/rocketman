@@ -9,6 +9,7 @@ import { SubOrder } from './entities/subOrder.entity';
 import { UpdateOrderDriverDto } from './dto/update-order.dto';
 import { Driver } from '../driver/entities/driver.entity';
 import { UpdateOrderStatusDto } from './dto/update-orderStatus.dto';
+import { FindOrderStatus } from './dto/find-order.dto';
 
 @Injectable()
 export class OrderService {
@@ -17,9 +18,12 @@ export class OrderService {
     @InjectRepository(Users) private readonly userRepo: Repository<Users>,
     @InjectRepository(Driver) private readonly driverRepo: Repository<Driver>) { }
 
-  async findAll() {
+  async findAll(status: any) {
     try {
-      let allOrders = await this.orderRepo.find({ relations: { user: true, driver: true, orders: true } });
+      let allOrders = await this.orderRepo.find({ relations: { user: true, driver: true, orders: {product: true} } });
+      if(status != 'barchasi'){
+        allOrders = allOrders.filter(order => order.status == status)
+      }
       let orders = JSON.parse(JSON.stringify(allOrders));
 
       if (!orders.length) {
@@ -77,6 +81,22 @@ export class OrderService {
         message: 'success',
         data: order,
         totalPrice
+      }
+    } catch (error) {
+      return {
+        status: 400,
+        message: error.message
+      }
+    }
+  }
+
+  async findOrderByStatus(body: UpdateOrderStatusDto){
+    try {
+      let orders = await this.orderRepo.findOne({where: {status: body.status}})
+      return {
+        status: 200,
+        message: 'orders by status',
+        data: orders
       }
     } catch (error) {
       return {
