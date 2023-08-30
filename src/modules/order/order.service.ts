@@ -88,7 +88,7 @@ export class OrderService {
 
   async create(body: CreateOrderDto) {
     try {
-      const user = await this.userRepo.findOne({ where: { id: body.user }, relations: {orders: true} });
+      const user = await this.userRepo.findOne({ where: { id: body.user }, relations: { orders: true } });
       if (!user) {
         throw new Error('user not found');
       }

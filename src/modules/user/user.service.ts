@@ -17,20 +17,20 @@ export class UserService {
   async findOne(id: number) {
     try {
       let data = await this.userRepo.findOne({
-        where: { id }, relations: {orders: {orders: true, driver: true}, complains: true},
+        where: { id }, relations: { orders: { orders: true, driver: true }, complains: true },
       });
 
       const updatedOrders = data.orders.map(order => ({
         ...order,
         total_price: order.orders.reduce((total, subOrder) => total + (subOrder.count * subOrder.product.product_price), 0)
       }));
-      
+
       const result = {
         ...data,
         orders: updatedOrders
       };
 
-     return result
+      return result
     } catch (error) {
       return error
     }
