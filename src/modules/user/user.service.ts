@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, EntityManager } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Users } from './entities/user.entity';
@@ -15,9 +15,25 @@ export class UserService {
   }
 
   async findOne(id: number) {
-    return await this.userRepo.findOne({
-      where: { id }, relations: { complains: true, orders: true },
-    });
+    try {
+      let data = await this.userRepo.findOne({
+        where: { id }, relations: {orders: {orders: true, driver: true}, complains: true},
+      });
+
+      const updatedOrders = data.orders.map(order => ({
+        ...order,
+        total_price: order.orders.reduce((total, subOrder) => total + (subOrder.count * subOrder.product.product_price), 0)
+      }));
+      
+      const result = {
+        ...data,
+        orders: updatedOrders
+      };
+
+     return result
+    } catch (error) {
+      return error
+    }
   }
 
   async create(body: CreateUserDto) {
