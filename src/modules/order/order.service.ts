@@ -19,10 +19,10 @@ export class OrderService {
 
   async findAll() {
     try {
-      let allOrders = await this.orderRepo.find({ relations: { user: true, driver: true, orders: true} });
+      let allOrders = await this.orderRepo.find({ relations: { user: true, driver: true, orders: true } });
       let orders = JSON.parse(JSON.stringify(allOrders));
 
-      if(!orders.length){
+      if (!orders.length) {
         return {
           status: 200,
           message: 'all orders',
@@ -69,7 +69,7 @@ export class OrderService {
       }, 0);
 
 
-      if(!order){
+      if (!order) {
         throw new Error('Order by id is not found')
       }
 
@@ -161,7 +161,7 @@ export class OrderService {
       let foundOrder = await this.orderRepo.findOne({ where: { id }, relations: {driver: true, user: true, orders: true} })
       if (!foundOrder) {
         throw new Error(`Order with ${id} not found`)
-      } else if (foundOrder.status == "bekor" || foundOrder.status == "yakun"){
+      } else if (foundOrder.status == "bekor" || foundOrder.status == "yakun") {
         throw new Error('You can not change status')
       } else if (!foundOrder.driver){
         throw new Error('You need to assign a driver before changing status')
