@@ -61,17 +61,16 @@ export class OrderService {
         where: { id }, relations: { user: true, driver: true, orders: true },
       });
 
+      if (!order) {
+        throw new Error('Order by id is not found')
+      }
+
       const totalPrice = order.orders.reduce((total, orderItem) => {
         const productPrice = orderItem.product.product_price;
         const itemCount = orderItem.count;
         const subtotal = productPrice * itemCount;
         return total + subtotal;
       }, 0);
-
-
-      if (!order) {
-        throw new Error('Order by id is not found')
-      }
 
       return {
         status: 200,
@@ -89,7 +88,7 @@ export class OrderService {
 
   async create(body: CreateOrderDto) {
     try {
-      const user = await this.userRepo.findOne({ where: { id: body.user } });
+      const user = await this.userRepo.findOne({ where: { id: body.user }, relations: {orders: true} });
       if (!user) {
         throw new Error('user not found');
       }
