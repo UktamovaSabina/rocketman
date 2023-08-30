@@ -129,7 +129,7 @@ export class OrderService {
 
   async updateDriver(id: number, body: UpdateOrderDriverDto) {
     try {
-      let foundOrder = await this.orderRepo.findOne({ where: { id } })
+      let foundOrder = await this.orderRepo.findOne({ where: { id }, relations: {driver: true, user: true, orders: true} })
       if (!foundOrder) {
         throw new Error(`Order with ${id} not found`)
       }
@@ -158,22 +158,24 @@ export class OrderService {
 
   async updateStatus(id: number, body: UpdateOrderStatusDto) {
     try {
-      let foundOrder = await this.orderRepo.findOne({ where: { id } })
+      let foundOrder = await this.orderRepo.findOne({ where: { id }, relations: {driver: true, user: true, orders: true} })
       if (!foundOrder) {
         throw new Error(`Order with ${id} not found`)
       } else if (foundOrder.status == "bekor" || foundOrder.status == "yakun"){
         throw new Error('You can not change status')
+      } else if (!foundOrder.driver){
+        throw new Error('You need to assign a driver before changing status')
       }
-      let foundDriver = await this.driverRepo.findOne({ where: { id: body.driver } })
+      let foundDriver = await this.driverRepo.findOne({ where: { id: foundOrder.driver.id } })
       if (!foundDriver) {
-        throw new Error(`Driver with ${body.driver} not found`)
+        throw new Error(`Driver with ${foundOrder.driver.id} not found`)
       }
       let order = { status: body.status }
-      if (body.status === "bekor" || body.status === "yakun") {
-        await this.driverRepo.update({ id: body.driver }, { status: true })
-      }
-
+      
       let orders = await this.orderRepo.update({ id }, order)
+      if (body.status === "bekor" || body.status === "yakun") {
+        await this.driverRepo.update({ id: foundDriver.id }, { status: true })
+      }
       if (orders.affected > 0) {
         return {
           status: 204,

@@ -37,10 +37,6 @@ export class Order extends BaseEntity {
   @ManyToOne(() => Driver, driver => driver.orders)
   driver: Driver;
 
-  // @ManyToMany(() => Product, products=>products.orders)
-  // @JoinTable()
-  // products: Product[];
-
   @OneToMany(() => SubOrder, (subOrder) => subOrder.order, { cascade: true })
   orders: SubOrder[];
 }

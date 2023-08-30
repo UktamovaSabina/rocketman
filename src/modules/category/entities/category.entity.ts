@@ -12,6 +12,6 @@ export class Category extends BaseEntity {
   @Column({ type: "boolean" })
   status: boolean;
 
-  @OneToMany(() => Store, (store) => store.category)
+  @OneToMany(() => Store, (store) => store.category, {cascade: true})
   stores: Store
 }

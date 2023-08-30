@@ -28,6 +28,6 @@ export class Store extends BaseEntity {
   @ManyToOne(() => Category, category => category.stores)
   category: Category;
 
-  @OneToMany(() => ProductCategory, product_category => product_category.store)
+  @OneToMany(() => ProductCategory, product_category => product_category.store, {cascade: true})
   productCategories: ProductCategory[]
 }
